@@ -384,7 +384,7 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
                     $price = '';
                     ob_start();
                     
-                    print( '<p class="total"><strong>Subtotal:</strong> <span class="amount">'.$price.'</span></p>' );
+                    print( '<p class="total"><strong>'.__( 'Subtotal:', 'quote-wc' ).'</strong> <span class="amount">'.$price.'</span></p>' );
                      
                     $fragments['p.total'] = ob_get_clean();
                     

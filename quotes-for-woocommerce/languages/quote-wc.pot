@@ -273,6 +273,17 @@ msgstr ""
 msgid "Quote emailed."
 msgstr ""
 
+#: quotes-woocommerce.php:387
+msgid "Subtotal:"
+msgstr ""
+
+#: quotes-woocommerce.php:428
+msgid ""
+"It is not possible to add products that require quotes to the Cart along "
+"with ones that do not. Hence, the existing products have been removed from "
+"the Cart."
+msgstr ""
+
 #: quotes-woocommerce.php:557
 msgid "Quote Complete"
 msgstr ""
