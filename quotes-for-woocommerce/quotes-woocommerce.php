@@ -6,6 +6,8 @@ Version: 1.6
 Author: Pinal Shah 
 WC Requires at least: 3.0.0
 WC tested up to: 3.5.7
+Text Domain: quote-wc
+Domain Path: /languages
 */
 
 if ( ! class_exists( 'quotes_for_wc' ) ) {
@@ -29,7 +31,10 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
             if( $this->version != get_option( 'quotes_for_wc' ) ) {
                 add_action( 'admin_init', array( &$this, 'qwc_update_db_check' ) );
             }
-            
+
+            // Plugin loaded
+			add_action( 'plugins_loaded', 'qwc_load_plugin' );
+
             // add setting to hide wc prices
             add_action( 'woocommerce_product_options_inventory_product_data', array( &$this, 'qwc_setting' ) );
             // hook in to save the quote settings
@@ -119,7 +124,19 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
         function qwc_update_db_check() {
             update_option( 'quotes_for_wc', '1.6' );
         }
-        
+		
+        /**
+         * Runs when the plugin is loaded
+         * @since 1.6
+         */
+		function qwc_load_plugin() {
+			
+			// For plugin translation - Only usefull for WordPress < 4.6 
+			load_plugin_textdomain( 'quote-wc', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+			
+		}
+
+
         /**
          * Add a setting to enable/disabe quotes
          * in the Inventory tab.
