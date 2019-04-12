@@ -2,7 +2,7 @@
 /*
 Plugin Name: Quotes for WooCommerce
 Description: This plugin allows you to convert your WooCommerce store into a quote only store. It will hide the prices for the products and not take any payment at Checkout. You can then setup prices for the items in the order and send a notification to the Customer. 
-Version: 1.6
+Version: 1.6.1
 Author: Pinal Shah 
 WC Requires at least: 3.0.0
 WC tested up to: 3.5.7
@@ -17,7 +17,7 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
          * @var   string
          * @since 1.0.0
          */
-        public $version = '1.6';
+        public $version = '1.6.1';
     
         public function __construct() {
             
@@ -64,8 +64,8 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
             add_filter( 'woocommerce_cancel_unpaid_order', array( $this, 'qwc_prevent_cancel' ), 10, 2 );
             
             // add payment gateway to override the usual ones
-            add_action( 'init', array( &$this, 'qwc_include_files' ), 5 );
-            add_action( 'admin_init', array( &$this, 'qwc_include_files_admin' ), 5 );
+            add_action( 'init', array( &$this, 'qwc_include_files' ), 1 );
+            add_action( 'admin_init', array( &$this, 'qwc_include_files_admin' ), 1 );
             add_action( 'woocommerce_payment_gateways', array( &$this, 'qwc_add_gateway' ), 10, 1 );
 
             // Checkout Payment Gateway load
@@ -89,7 +89,7 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
             add_action( 'admin_menu', array( &$this, 'qwc_admin_menu' ), 10 );
             
             // Added to Cart messages.
-            add_filter( 'wc_add_to_cart_message', array( &$this, 'add_to_cart_message' ), 10, 2 );
+            add_filter( 'wc_add_to_cart_message_html', array( &$this, 'add_to_cart_message' ), 10, 2 );
 
             // Page titles.
             add_filter( 'the_title', array( &$this, 'woocommerce_title' ), 99, 2 );
@@ -108,7 +108,7 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
          * @since 1.1
          */
         function qwc_activate() {
-            update_option( 'quotes_for_wc', '1.6' );
+            update_option( 'quotes_for_wc', '1.6.1' );
         }
         
         /**
@@ -117,7 +117,7 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
          * @since 1.1
          */
         function qwc_update_db_check() {
-            update_option( 'quotes_for_wc', '1.6' );
+            update_option( 'quotes_for_wc', '1.6.1' );
         }
         
         /**
@@ -665,15 +665,19 @@ if ( ! class_exists( 'quotes_for_wc' ) ) {
          * @return string
          * @since 1.6
          */
-        public function add_to_cart_message( $message, $product_id ) {
+        public function add_to_cart_message( $message, $products ) {
             $cart_name = get_option( 'qwc_cart_page_name' );
             $cart_name = $cart_name == '' ? 'Cart' : $cart_name;
 
-            if ( product_quote_enabled( $product_id ) ) {
-                $message = str_replace( 'added to your cart', "added to your $cart_name", $message );
-                $message = str_replace( 'View cart', "View $cart_name", $message );
+            if( is_array( $products ) && count( $products ) > 0 ) {
+                foreach ( $products as $product_id => $value ) {
+                    if ( product_quote_enabled( $product_id ) ) {
+                        $message = str_replace( 'added to your cart', "added to your $cart_name", $message );
+                        $message = str_replace( 'View cart', "View $cart_name", $message );
+                        break;
+                    }
+                }
             }
-
 
             return $message;
         }
